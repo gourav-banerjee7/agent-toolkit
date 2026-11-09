@@ -1,0 +1,12 @@
+{
+  "name": "platform",
+  "version": "0.1.0",
+  "description": "Terraform monitors with Slack alerts, and deterministic seed data for multi-state QA scenarios.",
+  "author": {
+    "name": "Gourav Banerjee",
+    "url": "https://github.com/gourav-banerjee7"
+  },
+  "repository": "https://github.com/gourav-banerjee7/agent-toolkit",
+  "license": "MIT",
+  "keywords": ["terraform", "observability", "monitoring", "seed-data", "qa"]
+}

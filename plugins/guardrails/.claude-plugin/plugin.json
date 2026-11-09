@@ -1,0 +1,12 @@
+{
+  "name": "guardrails",
+  "version": "0.1.0",
+  "description": "Block secrets before they are written or committed; lint files right after Claude edits them.",
+  "author": {
+    "name": "Gourav Banerjee",
+    "url": "https://github.com/gourav-banerjee7"
+  },
+  "repository": "https://github.com/gourav-banerjee7/agent-toolkit",
+  "license": "MIT",
+  "keywords": ["hooks", "secrets", "lint", "security"]
+}

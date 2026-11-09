@@ -1,0 +1,49 @@
+name: Skill evals
+
+# Manual only: evals call the Claude API and cost money, so they never run on every push.
+# Needs an ANTHROPIC_API_KEY repository secret.
+on:
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: "Plugin to evaluate"
+        type: choice
+        options: [pr-workflow, platform, guardrails]
+        default: pr-workflow
+      runs:
+        description: "Runs per case"
+        default: "3"
+      max_cost_usd:
+        description: "Hard cost ceiling for this run"
+        default: "5"
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Run evals
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          claude plugin eval "plugins/${{ inputs.plugin }}" \
+            --runs "${{ inputs.runs }}" \
+            --max-cost-usd "${{ inputs.max_cost_usd }}" \
+            --trust-plugin --allow-tools Bash Write Edit \
+            --no-publish --threshold 0.8 \
+            --report eval-report.html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-report-${{ inputs.plugin }}
+          path: eval-report.html

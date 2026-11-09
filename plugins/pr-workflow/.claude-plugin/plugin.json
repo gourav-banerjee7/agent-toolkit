@@ -1,0 +1,12 @@
+{
+  "name": "pr-workflow",
+  "version": "0.1.0",
+  "description": "Describe, review and risk-score pull requests with a free, rule-based risk scorer.",
+  "author": {
+    "name": "Gourav Banerjee",
+    "url": "https://github.com/gourav-banerjee7"
+  },
+  "repository": "https://github.com/gourav-banerjee7/agent-toolkit",
+  "license": "MIT",
+  "keywords": ["pull-request", "code-review", "risk", "github-actions"]
+}

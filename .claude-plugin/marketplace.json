@@ -1,0 +1,38 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
+  "name": "agent-toolkit",
+  "description": "Claude Code plugins for shipping code safely: PR description, review and risk scoring, platform skills, and guardrail hooks.",
+  "owner": {
+    "name": "Gourav Banerjee",
+    "url": "https://github.com/gourav-banerjee7"
+  },
+  "plugins": [
+    {
+      "name": "pr-workflow",
+      "description": "Describe, review and risk-score pull requests. Includes a free, rule-based PR risk scorer that also runs as a GitHub Action.",
+      "source": "./plugins/pr-workflow",
+      "category": "development"
+    },
+    {
+      "name": "platform",
+      "description": "Platform engineering skills: Terraform latency/error monitors with Slack alerts, and deterministic seed data for multi-state QA scenarios.",
+      "source": "./plugins/platform",
+      "category": "devops"
+    },
+    {
+      "name": "guardrails",
+      "description": "Hooks that block secrets before they are written or committed, and lint files right after Claude edits them.",
+      "source": "./plugins/guardrails",
+      "category": "security"
+    },
+    {
+      "name": "i-have-adhd",
+      "description": "Upstream plugin by Ayoub G. (MIT): action-first, ADHD-friendly output. pr-describe and pr-review follow its shape when it is on.",
+      "source": {
+        "source": "github",
+        "repo": "ayghri/i-have-adhd"
+      },
+      "category": "productivity"
+    }
+  ]
+}

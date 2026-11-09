@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Built scorer matches source
+        run: npm run check:dist
+      - name: Plugin manifests, skills, hooks and eval cases
+        run: npm run validate
+
+  terraform-templates:
+    name: Terraform templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: fmt + validate each template on its own
+        run: |
+          set -euo pipefail
+          ref=plugins/platform/skills/terraform-monitor/reference
+          terraform fmt -check -diff "$ref"
+          check() { # <template> <provider name> <provider source>
+            dir=$(mktemp -d)
+            cp "$ref/$1.tf" "$dir/"
+            printf 'terraform {\n  required_providers {\n    %s = { source = "%s" }\n  }\n}\n' "$2" "$3" > "$dir/versions.tf"
+            terraform -chdir="$dir" init -backend=false -input=false >/dev/null
+            terraform -chdir="$dir" validate
+          }
+          check datadog datadog DataDog/datadog
+          check cloudwatch aws hashicorp/aws

@@ -1,0 +1,24 @@
+{
+  "name": "agent-toolkit",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Claude Code plugin marketplace: PR workflow, platform skills and guardrail hooks.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p pr-risk/tsconfig.json && node scripts/sync-secrets.mjs",
+    "typecheck": "tsc -p pr-risk/tsconfig.json --noEmit && tsc -p pr-risk/tsconfig.test.json",
+    "test": "vitest run",
+    "check:dist": "npm run build && git diff --exit-code -- plugins/pr-workflow/skills/pr-risk/scripts plugins/guardrails/hooks/lib",
+    "validate": "node scripts/validate-plugins.mjs",
+    "pr-risk": "node plugins/pr-workflow/skills/pr-risk/scripts/cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  }
+}

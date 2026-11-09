@@ -1,0 +1,46 @@
+name: "pr-risk"
+description: "Label pull requests critical, significant or routine with transparent, rule-based scoring. No LLM, no API key, no cost."
+author: "Gourav Banerjee"
+branding:
+  icon: "alert-triangle"
+  color: "orange"
+
+inputs:
+  github-token:
+    description: "Token with pull-requests: write and issues: write."
+    default: ${{ github.token }}
+  config-path:
+    description: "JSON config with your own paths and weights, read from the base branch."
+    default: ".github/pr-risk.json"
+  comment:
+    description: "Post (and keep updating) one risk comment on the PR."
+    default: "true"
+  label:
+    description: "Apply a risk: critical / significant / routine label."
+    default: "true"
+  fail-on:
+    description: "Fail the check at this level or above: none, significant or critical."
+    default: "none"
+
+outputs:
+  level:
+    description: "critical, significant or routine"
+    value: ${{ steps.score.outputs.level }}
+  score:
+    description: "Numeric risk score"
+    value: ${{ steps.score.outputs.score }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: score
+      shell: bash
+      env:
+        INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
+        INPUT_CONFIG_PATH: ${{ inputs.config-path }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_LABEL: ${{ inputs.label }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+      # The scorer is built into the pr-workflow plugin so the Claude skill and this
+      # action run the exact same code.
+      run: node "$GITHUB_ACTION_PATH/../plugins/pr-workflow/skills/pr-risk/scripts/action.js"
